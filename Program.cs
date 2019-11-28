@@ -17,13 +17,23 @@ namespace AutoGitRepo {
         private static string RepositoryDescription { get; set; } = "";
         private static string GitIgnore { get; set; } = "";
         private static bool IsPrivate { get; set; } = false;
+
+        private static string HelpComamand { get; set; } = @"
+These are the arguments that you can use in AutoGitRepo:
+
+[-n | --name]         (required)   Set the name of the new repository
+[-d | --description]  (optional)   Set the description of the new repository
+[-p | --is-private]   (optional)   If this argument is present your new repository will be private
+[-g | --gitignore]    (optional)   You need to use the same name of the gitignore that you want use, see README";
         #endregion
 
         static void Main(string[] args) {
 
             // If 0 arguments are given print description of the app and help argument 
             if (args.Length == 0) {
-                Console.WriteLine("This is a tool made for automate the process of create a github repository.\n\nA help argument will be added soon :)");
+                Console.WriteLine("This is a tool made for automate the process of create a github repository.\n" +
+                    "\n" +
+                    HelpComamand);
                 return;
             }
 
@@ -36,7 +46,8 @@ namespace AutoGitRepo {
                         case "--name":
                         case "-n":
                             if (args.Contains("--name") & args.Contains("-n")) {
-                                throw new RepetedArgumentsException("--name and -n are repeted");
+                                Console.WriteLine("--name and -n are repeted");
+                                return;
                             }
                             RepositoryName = args[1 + i];
                             break;
@@ -44,15 +55,17 @@ namespace AutoGitRepo {
                         case "--description":
                         case "-d":
                             if (args.Contains("--description") & args.Contains("-d")) {
-                                throw new RepetedArgumentsException("--description and -d are repeted");
+                                Console.WriteLine("--description and -d are repeted");
+                                return;
                             }
                             RepositoryDescription = args[1 + i];
                             break;
 
-                        case "--is_private":
+                        case "--is-private":
                         case "-p":
-                            if (args.Contains("--is_private") & args.Contains("-p")) {
-                                throw new RepetedArgumentsException("--is_private and -p are repeted");
+                            if (args.Contains("--is-private") & args.Contains("-p")) {
+                                Console.WriteLine("--is-private and -p are repeted");
+                                return;
                             }
                             IsPrivate = true;
                             // This argument dosen't need a parameter.
@@ -62,27 +75,33 @@ namespace AutoGitRepo {
                         case "--gitignore":
                         case "-g":
                             if (args.Contains("--gitignore") & args.Contains("-g")) {
-                                throw new RepetedArgumentsException("--gitignore and -g are repeted");
+                                Console.WriteLine("--gitignore and -g are repeted");
+                                return;
                             }
-                            GitIgnore = args[1 + i];
+
+                            // Remove the .gitinore if needed ( Github doesn't want the ext )
+                            GitIgnore = args[1 + i].Replace(".gitignore", "");
                             break;
 
                         case "--help":
                         case "-h":
                             if (args.Contains("--help") & args.Contains("-h")) {
-                                throw new RepetedArgumentsException("--help and -h are repeted");
+                                Console.WriteLine("--help and -h are repeted");
+                                return;
                             }
-                            Console.WriteLine("This will added soon");
+                            Console.WriteLine(HelpComamand);
                             return;
 
                         default:
-                            throw new ArgumentNotImplementedException($"The argument {args[0 + i]} is not implement yet");
+                            Console.WriteLine($"arg: '{args[0 + i]}' is not a agr command. See 'agr -h' or 'agr --help'");
+                            return;
                     }
                 }
 
                 // Check if the Repository Name it wasn't initialized
-                if(RepositoryName == null) {
-                    throw new ArgumentNameNotUsedException("--name(-n) is a obligatory argument");
+                if (RepositoryName == null) {
+                    Console.WriteLine("--name(-n) is a obligatory argument");
+                    return;
                 }
             }
 
@@ -99,7 +118,7 @@ namespace AutoGitRepo {
             };
 
             // Your github key
-            const string myToken = "yourTokenKey";
+            const string myToken = "yourKeyToken";
 
             // Commands using curl with GithubAPI
             string batCommand = $@"
@@ -127,6 +146,9 @@ echo $page_url";
             File.WriteAllText("run.bat", batCommand);
 
             // Initializing mainProcess( run.bat )
+
+            #pragma warning disable IDE0063 // I want use using like that
+            // Use simple 'using' statement
             using (Process mainProcess = new Process()) {
 
                 // Process Info
