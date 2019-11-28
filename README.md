@@ -24,7 +24,7 @@ If you set it as a enverionment variable you need to call the program with _arg_
 
 These are the arguments that you can use in AutoGitRepo:
 
-[-n | --name]         (required)   Set the name of the new repository<br />
-[-d | --description]  (optional)   Set the description of the new repository<br />
-[-p | --is-private]   (optional)   If this argument is present your new repository will be private<br />
-[-g | --gitignore]    (optional)   Name from the [gitignore template](https://github.com/github/gitignore)<br />
+[ -n | --name ]         (required)   Set the name of the new repository<br />
+[ -d | --description ]  (optional)   Set the description of the new repository<br />
+[ -p | --is-private ]   (optional)   If this argument is present your new repository will be private<br />
+[ -g | --gitignore ]    (optional)   Name from the [gitignore template](https://github.com/github/gitignore)<br />
