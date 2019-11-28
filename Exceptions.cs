@@ -20,4 +20,13 @@ namespace AutoGitRepo {
         public ArgumentNotImplementedException(string message) : base(message) {
         }
     }
+
+    class RepetedArgumentsException : Exception {
+
+        public RepetedArgumentsException() {
+        }
+
+        public RepetedArgumentsException(string message) : base(message) {
+        }
+    }
 }
