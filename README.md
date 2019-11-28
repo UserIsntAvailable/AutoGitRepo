@@ -27,8 +27,4 @@ These are the arguments that you can use in AutoGitRepo:
 [-n | --name]         (required)   Set the name of the new repository
 [-d | --description]  (optional)   Set the description of the new repository
 [-p | --is-private]   (optional)   If this argument is present your new repository will be private
-[-g | --gitignore]    (optional)   Name from the [gitignore template](https://github.com/github/gitignore)(without the)
-
-If you want add more arguments you only need to change the Parameters class with those you need and assign it the args[pos] or contrary delete arguments that you don't need (see here: https://developer.github.com/v3/repos/)
-
-
+[-g | --gitignore]    (optional)   Name from the [gitignore template](https://github.com/github/gitignore)
