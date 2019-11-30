@@ -7,24 +7,31 @@ using System.Linq;
 using System.Text;
 
 namespace AutoGitRepo {
+
     class Program {
 
         #region Private Properties
+        // Your github key
+        private const string myToken = "yourTokenKey";
+
         private static int LineCount { get; set; }
         private static StringBuilder Output { get; set; } = new StringBuilder();
-
+        
+        // Nullable
         private static string RepositoryName { get; set; }
-        private static string RepositoryDescription { get; set; } = "";
-        private static string GitIgnore { get; set; } = "";
-        private static bool IsPrivate { get; set; } = false;
 
         private static string HelpComamand { get; set; } = @"
 These are the arguments that you can use in AutoGitRepo:
 
-[-n | --name]         (required)   Set the name of the new repository
-[-d | --description]  (optional)   Set the description of the new repository
-[-p | --is-private]   (optional)   If this argument is present your new repository will be private
-[-g | --gitignore]    (optional)   You need to use the same name of the gitignore that you want use, see README";
+[ -n | --name ]           (required)   Set the name of the new repository
+[ -d | --description ]    (optional)   Set the description of the new repository
+[ -p | --is-private ]     (optional)   If this argument is present your new repository will be private
+[ -g | --gitignore ]      (optional)   You need to use the same name of the gitignore that you want use, see README
+[ -o | --on-current-dir ] (optional)   Is present the repo files will be pasted on the current dir";
+        private static string RepositoryDescription { get; set; } = "";
+        private static string GitIgnore { get; set; } = "";
+        private static bool IsPrivate { get; set; } = false;
+        private static bool OnCurrentDir { get; set; } = false;
         #endregion
 
         static void Main(string[] args) {
@@ -83,6 +90,17 @@ These are the arguments that you can use in AutoGitRepo:
                             GitIgnore = args[1 + i].Replace(".gitignore", "");
                             break;
 
+                        case "--on-current-dir":
+                        case "-o":
+                            if (args.Contains("--on-current-dir") & args.Contains("-o")) {
+                                Console.WriteLine("--on-current-dir and -o are repeted");
+                                return;
+                            }
+                            OnCurrentDir = true;
+                            // This argument dosen't need a parameter.
+                            i -= 1;
+                            break;
+
                         case "--help":
                         case "-h":
                             if (args.Contains("--help") & args.Contains("-h")) {
@@ -117,10 +135,7 @@ These are the arguments that you can use in AutoGitRepo:
                 }
             };
 
-            // Your github key
-            const string myToken = "yourKeyToken";
-
-            // Commands using curl with GithubAPI
+            // Commands used wtih curl for request the GithubAPI
             string batCommand = $@"
 read -r -d '' PAYLOAD <<EOP
 {JsonConvert.SerializeObject(jsonData.ToArray()).Replace("[", "").Replace("]", "")}
@@ -146,9 +161,6 @@ echo $page_url";
             File.WriteAllText("run.bat", batCommand);
 
             // Initializing mainProcess( run.bat )
-
-            #pragma warning disable IDE0063 // I want use using like that
-            // Use simple 'using' statement
             using (Process mainProcess = new Process()) {
 
                 // Process Info
@@ -161,7 +173,6 @@ echo $page_url";
 
                 // Event that catch the output from run.bat
                 mainProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) => {
-
 
                     // Append line numbers to each line of the output.
                     if (!string.IsNullOrEmpty(e.Data)) {
@@ -177,16 +188,16 @@ echo $page_url";
                 mainProcess.BeginOutputReadLine();
                 mainProcess.WaitForExit();
 
-                // Stating gitProcess ( git clone of the projet created )
+                // Stating gitProcess
                 using (Process gitProcess = new Process()) {
 
                     // The link for the repo that was created
-                    string page_url = Output.ToString().Replace("\n", "").Replace("[1]: ", "");
+                    string urlRepository = Output.ToString().Replace("\n", "").Replace("[1]: ", "");
 
                     // Process Info
                     gitProcess.StartInfo = new ProcessStartInfo {
                         FileName = "cmd.exe",
-                        Arguments = $"/C git clone https://github.com/{page_url}",
+                        Arguments = $"{WhichCommand(OnCurrentDir, urlRepository)}",
                         UseShellExecute = false
                     };
 
@@ -211,13 +222,32 @@ echo $page_url";
                 File.Delete("run.bat");
             }
         }
+
+        private static string WhichCommand(bool boolean, string urlRepository) {
+
+            Console.WriteLine();
+
+            if (boolean)
+                return $"/C git init&" +
+                       $"git remote add origin https://github.com/{urlRepository}&" +
+                       $"git pull origin master";
+            else
+                return $"/C git clone https://github.com/{urlRepository}";
+        }
     }
-    class JsonAttributes {
+
+    public class JsonAttributes {
+
         public string name { get; set; }
+
         public string description { get; set; }
+
         public bool @private { get; set; }
+
         public bool auto_init { get; set; }
+
         public string gitignore_template { get; set; }
+
         public string license_template { get; set; }
     }
 }
