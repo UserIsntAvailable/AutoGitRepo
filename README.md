@@ -18,7 +18,7 @@ Once compiled, you can put the .exe anywhere after that you can set it in your P
  -8. Click Ok on all open windows and **close all the command prompt**<br />
 
 ## Usage
-If you set it as an enverionment variable you need to call the program with _agr_ on the folder that you want start your new repo or if you want use the .exe you can put it in the folder for create the repo.
+If you set it as an environment variable you need to call the program with _agr_ on the folder that you want start your new repo or if you want use the .exe you can put it in the folder for create the repo.
 
 ### Arguments
 

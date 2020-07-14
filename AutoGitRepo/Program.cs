@@ -11,7 +11,7 @@ namespace AutoGitRepo {
 
         #region Private Properties
         // Your github key
-        private const string myToken = "b32b7a4925850072750133c15fea54168bd3819e";
+        private const string myToken = "yourAPIToken";
 
         private static int LineCount { get; set; }
         private static StringBuilder Output { get; set; } = new StringBuilder();
