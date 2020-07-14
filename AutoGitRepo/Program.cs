@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace AutoGitRepo {
 
@@ -12,11 +11,11 @@ namespace AutoGitRepo {
 
         #region Private Properties
         // Your github key
-        private const string myToken = "yourTokenKey";
+        private const string myToken = "b32b7a4925850072750133c15fea54168bd3819e";
 
         private static int LineCount { get; set; }
         private static StringBuilder Output { get; set; } = new StringBuilder();
-        
+
         // Nullable
         private static string RepositoryName { get; set; }
 
@@ -124,21 +123,20 @@ These are the arguments that you can use in AutoGitRepo:
             }
 
             // Initializer of json
-            List<JsonAttributes> jsonData = new List<JsonAttributes> {
-                new JsonAttributes() {
-                    name = RepositoryName,
-                    description = RepositoryDescription,
-                    @private = IsPrivate,
-                    auto_init = true,
-                    gitignore_template = GitIgnore,
-                    license_template = "mit"
-                }
+            JsonAttributes jsonData = new JsonAttributes {
+
+                name = RepositoryName,
+                description = RepositoryDescription,
+                @private = IsPrivate,
+                auto_init = true,
+                gitignore_template = GitIgnore,
+                license_template = "mit"
             };
 
             // Commands used wtih curl for request the GithubAPI
             string batCommand = $@"
 read -r -d '' PAYLOAD <<EOP
-{JsonConvert.SerializeObject(jsonData.ToArray()).Replace("[", "").Replace("]", "")}
+{JsonSerializer.Serialize(jsonData)}
 EOP
 
 JSON=`curl -H ""Authorization: token {myToken}"" -d ""$PAYLOAD"" https://api.github.com/user/repos `
