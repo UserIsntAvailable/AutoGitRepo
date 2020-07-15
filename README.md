@@ -1,31 +1,20 @@
 # AutoGitRepo
-
 This is a tool made for automate the process of create a github repository.
 
-## Installation
-You need to compile the code with your token on Program.cs provided by github for use the GithubAPI.
+## Setup
+As a recommendation of [Ben Awad](https://www.youtube.com/user/99baddawg), it is a good idea to set your api tokens as an environment variable to facilitate its use.
 
-Once compiled, you can put the .exe anywhere after that you can set it in your PC as an environment variable or use it like a normal .exe if you will do that you can skip the next section.
-
-### Steps for set .exe as an environment variable
- -1. Open start menu,<br />
- -2. Search **Edit the system environment variables** then click<br />
- -3. Click Environment variables button<br />
- -4. There you see two boxes, in System Variables box find path variable<br />
- -5. Click Edit<br />
- -6. A window pops up, Click New<br />
- -7. Type the **Directory** path of the .exe (Directory means exclude the file name from path)<br />
- -8. Click Ok on all open windows and **close all the command prompt**<br />
+If you want to set it as an environment variable, I use _githubApiToken_ as varible name, of course, you could simply compile the code using your own api token.
 
 ## Usage
-If you set it as an environment variable you need to call the program with _agr_ on the folder that you want start your new repo or if you want use the .exe you can put it in the folder for create the repo.
+You can set this program too as an environment variable to use it everywhere.
 
 ### Arguments
 
-These are the arguments that you can use in AutoGitRepo:
+These are the arguments available in AutoGitRepo:
 
-[ -n | --name ]           (required)   Set the name of the new repository<br />
-[ -d | --description ]    (optional)   Set the description of the new repository<br />
-[ -p | --is-private ]     (optional)   If present your new repository will be private<br />
-[ -g | --gitignore ]      (optional)   Name from the [gitignore template](https://github.com/github/gitignore)<br />
-[ -o | --on-current-dir ] (optional)   If present the repo files will be pasted on the current dir<br />
+[ --name | -n ]           (required)   Name of the new repository<br />
+[ --description | -d ]    (optional)   The description of the new repository<br />
+[ --gitignore | -g ]      (optional)   Name from the [gitignore template](https://github.com/github/gitignore)<br />
+[ --is-private | -p ]     (optional)   If present your new repository will be private<br />
+[ --on-current-dir | -o ] (optional)   If present the repo files will be pasted on the current dir<br />
