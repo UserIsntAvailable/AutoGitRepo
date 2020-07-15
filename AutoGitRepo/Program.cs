@@ -3,7 +3,9 @@ using System.Text;
 using System.Text.Json;
 using System.Net.Http;
 using System.CommandLine;
+using System.Diagnostics;
 using System.CommandLine.Invocation;
+using System.Text.RegularExpressions;
 
 namespace AutoGitRepo {
 
@@ -41,7 +43,7 @@ namespace AutoGitRepo {
                     ) { Argument = new Argument<bool>() },
             };
 
-            rootCommand.Handler = CommandHandler.Create((string name, string description, string gitignore, bool isPrivate, bool isCurrentDir) => {
+            rootCommand.Handler = CommandHandler.Create((string name, string description, string gitignore, bool isPrivate, bool onCurrentDir) => {
 
                 var json = JsonSerializer.Serialize(new {
                     name,
@@ -53,6 +55,8 @@ namespace AutoGitRepo {
                     auto_init = true,
                     license_template = "mit"
                 });
+
+                #region HttpClient
 
                 using HttpClient httpClient = new HttpClient();
 
@@ -78,6 +82,36 @@ namespace AutoGitRepo {
                 }
 
                 Console.WriteLine("Your repository was created succesfully.");
+                #endregion
+
+                #region GitProcess
+
+                string repositoryUrl = Regex.Match(
+                    resp.Content.ReadAsStringAsync().Result,
+                    "\"full_name\":([^,]+)").Groups[1].Value;
+
+                using System.Diagnostics.Process gitProcess
+                = new System.Diagnostics.Process();
+
+                // Process Info
+                gitProcess.StartInfo = new ProcessStartInfo {
+                    FileName = "cmd.exe",
+                    Arguments = onCurrentDir
+                    ? $"/C git init&git remote add origin https://github.com/{repositoryUrl}&" + "git pull origin master"
+                    : $"/C git clone https://github.com/{repositoryUrl}",
+                    UseShellExecute = false
+                };
+
+                // Starting process
+                gitProcess.Start();
+
+                /* If you are not connected with your github account
+                the program will wait until you put your credentials */
+                gitProcess.WaitForExit();
+
+                // Close gitProcess
+                gitProcess.Close();
+                #endregion
             });
 
             // If args are passed
